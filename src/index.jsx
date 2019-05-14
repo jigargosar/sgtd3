@@ -3,4 +3,12 @@ import './index.css'
 import React from 'react'
 import { render } from 'react-dom'
 
-render(<div>HW</div>, document.getElementById('root'))
+function App() {
+  return (
+    <div>
+      <div>HW</div>
+    </div>
+  )
+}
+
+render(<App />, document.getElementById('root'))
