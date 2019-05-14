@@ -1,10 +1,16 @@
 import 'tachyons'
 import './index.css'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { render } from 'react-dom'
 import faker from 'faker'
 import nanoid from 'nanoid'
 import * as R from 'ramda'
+
+function invariant(bool, msg) {
+  if (!bool) {
+    throw new Error(msg || 'invariant failed')
+  }
+}
 
 function createLine(options) {
   return {
@@ -12,6 +18,23 @@ function createLine(options) {
     title: faker.name.lastName(),
   }
 }
+
+const findById = R.compose(
+  R.find,
+  R.propEq('id'),
+)
+
+const idEq = R.propEq('id')
+
+function createLines() {
+  return R.times(() => createLine())(10)
+}
+
+const trashLineById = R.curry(function(id, state) {
+  const idx = R.findIndex(idEq(id))(state.lines)
+  invariant(idx >= 0)
+  return R.assocPath(['lines', idx, 'trashed'])(true)(state)
+})
 
 function LineView({ line, actions }) {
   return (
@@ -31,29 +54,24 @@ function LineView({ line, actions }) {
   )
 }
 
-const findById = R.compose(
-  R.find,
-  R.propEq('id'),
-)
-
 function App() {
-  const line = createLine()
-  const lines = R.times(() => createLine())(10)
+  const [state, setState] = useState(() => ({
+    lines: createLines(),
+  }))
 
   const actions = useMemo(() => {
     return {
       lineDelClicked(line) {
-        const foundLine = findById(line.id)(lines)
-        console.log(foundLine)
+        setState(trashLineById(line.id))
       },
     }
-  })
+  }, [setState])
 
-  return (
-    <div className="sans-serif">
-      {R.map(line => <LineView line={line} actions={actions} />)(lines)}
-    </div>
-  )
+  const filteredLines = R.reject(R.propOr(false, 'trashed'))(state.lines)
+  const renderLines = R.map(line => (
+    <LineView line={line} actions={actions} />
+  ))
+  return <div className="sans-serif">{renderLines(filteredLines)}</div>
 }
 
 render(<App />, document.getElementById('root'))
