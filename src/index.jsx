@@ -86,27 +86,42 @@ function App() {
   const selectedTab = R.propOr('ALL', 'currentTab')(state)
 
   const selTabCN = 'bg-black white'
-  return (
-    <div className="sans-serif">
-      <div className="pa2 flex">
-        <div
-          className={`pa2 ${selectedTab === 'ALL' ? selTabCN : ''}`}
-          onClick={() => actions.onTabClicked('ALL')}
-        >
-          ALL: {filteredCt}
+
+  const page = R.propOr({ kind: 'DEFAULT' }, 'page')(state)
+
+  if (page.kind === 'DEFAULT') {
+    return (
+      <div className="sans-serif">
+        <div className="pa2 flex">
+          <div
+            className={`pa2 ${selectedTab === 'ALL' ? selTabCN : ''}`}
+            onClick={() => actions.onTabClicked('ALL')}
+          >
+            ALL: {filteredCt}
+          </div>
+          <div
+            className={`pa2 ${selectedTab === 'TRASH' ? selTabCN : ''}`}
+            onClick={() => actions.onTabClicked('TRASH')}
+          >
+            Trashed: {trashCt}
+          </div>
         </div>
-        <div
-          className={`pa2 ${selectedTab === 'TRASH' ? selTabCN : ''}`}
-          onClick={() => actions.onTabClicked('TRASH')}
-        >
-          Trashed: {trashCt}
-        </div>
+        <hr />
+        {selectedTab === 'ALL' && renderLines(filteredLines)}
+        {selectedTab === 'TRASH' && renderLines(trashedLines)}
       </div>
-      <hr />
-      {selectedTab === 'ALL' && renderLines(filteredLines)}
-      {selectedTab === 'TRASH' && renderLines(trashedLines)}
-    </div>
-  )
+    )
+  } else if (page.kind === 'LINE_DETAIL') {
+    const id = page.id
+    const line = R.find(idEq(id))(state.lines)
+    return (
+      <div>
+        <div>DETAIL:</div>
+        <div>ID: {line.id}</div>
+        <div>Title: {line.title}</div>
+      </div>
+    )
+  }
 }
 
 render(<App />, document.getElementById('root'))
