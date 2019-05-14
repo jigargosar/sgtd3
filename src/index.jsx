@@ -12,19 +12,15 @@ function invariant(bool, msg) {
   }
 }
 
+const idEq = R.propEq('id')
+const isTrashed = R.propOr(false, 'trashed')
+
 function createLine(options) {
   return {
     id: `I_${nanoid()}`,
     title: faker.name.lastName(),
   }
 }
-
-const findById = R.compose(
-  R.find,
-  R.propEq('id'),
-)
-
-const idEq = R.propEq('id')
 
 function createLines() {
   return R.times(() => createLine())(10)
@@ -67,11 +63,22 @@ function App() {
     }
   }, [setState])
 
-  const filteredLines = R.reject(R.propOr(false, 'trashed'))(state.lines)
+  const trashedLines = R.filter(isTrashed)(state.lines)
+  const trashCount = trashedLines.length
+  const filteredLines = R.reject(isTrashed)(state.lines)
+  const filteredCt = filteredLines.length
   const renderLines = R.map(line => (
-    <LineView line={line} actions={actions} />
+    <LineView key={line.id} line={line} actions={actions} />
   ))
-  return <div className="sans-serif">{renderLines(filteredLines)}</div>
+  return (
+    <div className="sans-serif">
+      <div className="pa2 flex">
+        <div className="ph2">Visible: {filteredCt}</div>
+        <div className="ph2">Trashed: {trashCount}</div>
+      </div>
+      {renderLines(filteredLines)}
+    </div>
+  )
 }
 
 render(<App />, document.getElementById('root'))
