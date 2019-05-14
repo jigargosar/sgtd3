@@ -103,28 +103,33 @@ function App() {
   if (page.kind === 'MAIN_PAGE') {
     return renderMainPage(state, actions)
   } else if (page.kind === 'LINE_DETAIL') {
-    const id = page.id
-    const line = R.find(idEq(id))(state.lines)
-    return (
-      <div>
-        <button onClick={() => actions.onBackClicked()}>Back</button>
-        <div>DETAIL:</div>
-        <div>ID: {line.id}</div>
-        <div>Title: {line.title}</div>
-        <div className="flex">
-          {line.trashed ? (
-            <button onClick={() => actions.lineDetailRestoreClicked(line)}>
-              RESTORE
-            </button>
-          ) : (
-            <button onClick={() => actions.lineDetailDelClicked(line)}>
-              DEL
-            </button>
-          )}
-        </div>
-      </div>
-    )
+    return renderLineDetailPage(actions, state)
   }
+}
+
+function renderLineDetailPage(actions, state) {
+  const page = state.page
+  const id = page.id
+  const line = R.find(idEq(id))(state.lines)
+  return (
+    <div>
+      <button onClick={() => actions.onBackClicked()}>Back</button>
+      <div>DETAIL:</div>
+      <div>ID: {line.id}</div>
+      <div>Title: {line.title}</div>
+      <div className="flex">
+        {line.trashed ? (
+          <button onClick={() => actions.lineDetailRestoreClicked(line)}>
+            RESTORE
+          </button>
+        ) : (
+          <button onClick={() => actions.lineDetailDelClicked(line)}>
+            DEL
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 function renderMainPage(state, actions) {
