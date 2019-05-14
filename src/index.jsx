@@ -66,22 +66,7 @@ function App() {
   const [state, setState] = useState(loadState)
   useEffect(() => cacheState(state), [state])
 
-  const actions = useMemo(() => {
-    return {
-      lineDelClicked(line) {
-        setState(trashLineById(line.id))
-      },
-      onTabClicked(name) {
-        setState(R.assoc('currentTab')(name))
-      },
-      onLineLITitleClicked(line) {
-        setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
-      },
-      onBackClicked() {
-        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
-      },
-    }
-  }, [setState])
+  const actions = useActions(setState)
 
   const trashedLines = R.filter(isTrashed)(state.lines)
   const trashCt = trashedLines.length
@@ -137,3 +122,22 @@ function App() {
 }
 
 render(<App />, document.getElementById('root'))
+
+function useActions(setState) {
+  return useMemo(() => {
+    return {
+      lineDelClicked(line) {
+        setState(trashLineById(line.id))
+      },
+      onTabClicked(name) {
+        setState(R.assoc('currentTab')(name))
+      },
+      onLineLITitleClicked(line) {
+        setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
+      },
+      onBackClicked() {
+        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
+      },
+    }
+  }, [setState])
+}
