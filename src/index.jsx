@@ -185,29 +185,30 @@ function renderMainPage(state, actions) {
 }
 
 function LineLI({ line, actions }) {
+  const trashBtn = line.trashed ? (
+    <button
+      className="mh2"
+      onClick={() => actions.lineLiRestoreClicked(line)}
+    >
+      RESTORE
+    </button>
+  ) : (
+    <button className="mh2" onClick={() => actions.lineLiDelClicked(line)}>
+      DEL
+    </button>
+  )
   return (
-    <div className="pa2 code f6">
+    <div className="pa2 code f5">
       <div className="flex items-center">
-        <div>Item</div>
-        {line.trashed ? (
-          <button
-            className="mh2"
-            onClick={() => actions.lineLiRestoreClicked(line)}
-          >
-            RESTORE
-          </button>
-        ) : (
-          <button
-            className="mh2"
-            onClick={() => actions.lineLiDelClicked(line)}
-          >
-            DEL
-          </button>
-        )}
+        {/* <div>Item</div> */}
+        {false && trashBtn}
       </div>
-      <div>Id:{line.id}</div>
-      <div onClick={() => actions.onLineLITitleClicked(line)}>
-        Title:{line.title}
+      <div
+        className="pointer hover-dark-blue"
+        onClick={() => actions.onLineLITitleClicked(line)}
+      >
+        <div>{line.title}</div>
+        <div className="f7 o-70">id: {line.id}</div>
       </div>
     </div>
   )
