@@ -42,6 +42,25 @@ const trashLineById = R.curry(function(id, state) {
   return R.assocPath(['lines', idx, 'trashed'])(true)(state)
 })
 
+function useActions(setState) {
+  return useMemo(() => {
+    return {
+      lineDelClicked(line) {
+        setState(trashLineById(line.id))
+      },
+      onTabClicked(name) {
+        setState(R.assoc('currentTab')(name))
+      },
+      onLineLITitleClicked(line) {
+        setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
+      },
+      onBackClicked() {
+        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
+      },
+    }
+  }, [setState])
+}
+
 function LineLI({ line, actions }) {
   return (
     <div className="pa2 code f6">
@@ -125,22 +144,3 @@ function App() {
 }
 
 render(<App />, document.getElementById('root'))
-
-function useActions(setState) {
-  return useMemo(() => {
-    return {
-      lineDelClicked(line) {
-        setState(trashLineById(line.id))
-      },
-      onTabClicked(name) {
-        setState(R.assoc('currentTab')(name))
-      },
-      onLineLITitleClicked(line) {
-        setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
-      },
-      onBackClicked() {
-        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
-      },
-    }
-  }, [setState])
-}
