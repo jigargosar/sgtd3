@@ -48,11 +48,31 @@ const unTrashLineById = R.curry(function(id, state) {
   return R.assocPath(['lines', idx, 'trashed'])(false)(state)
 })
 
+const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
+
 function useActions(setState) {
   return useMemo(() => {
     return {
       lineLiDelClicked(line) {
         setState(trashLineById(line.id))
+      },
+      lineDetailDelClicked(line) {
+        setState(
+          R.pipe(
+            //
+            trashLineById(line.id),
+            toMainPage,
+          ),
+        )
+      },
+      lineDetailRestoreClicked(line) {
+        setState(
+          R.pipe(
+            //
+            unTrashLineById(line.id),
+            toMainPage,
+          ),
+        )
       },
       lineLiRestoreClicked(line) {
         setState(unTrashLineById(line.id))
@@ -64,7 +84,7 @@ function useActions(setState) {
         setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
       },
       onBackClicked() {
-        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
+        setState(toMainPage)
       },
     }
   }, [setState])
@@ -154,9 +174,15 @@ function App() {
         <div>ID: {line.id}</div>
         <div>Title: {line.title}</div>
         <div className="flex">
-          <button onClick={() => actions.lineLiDelClicked(line)}>
-            DEL
-          </button>
+          {line.trashed ? (
+            <button onClick={() => actions.lineDetailRestoreClicked(line)}>
+              DEL
+            </button>
+          ) : (
+            <button onClick={() => actions.lineDetailDelClicked(line)}>
+              DEL
+            </button>
+          )}
         </div>
       </div>
     )
