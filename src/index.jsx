@@ -55,7 +55,7 @@ function LineLI({ line, actions }) {
         </button>
       </div>
       <div>Id:{line.id}</div>
-      <div onClick={() => actions.onTitleClicked(line)}>
+      <div onClick={() => actions.onLineLITitleClicked(line)}>
         Title:{line.title}
       </div>
     </div>
@@ -116,6 +116,9 @@ function App() {
         <div>DETAIL:</div>
         <div>ID: {line.id}</div>
         <div>Title: {line.title}</div>
+        <div className="flex">
+          <button onClick={() => actions.lineDelClicked(line)}>DEL</button>
+        </div>
       </div>
     )
   }
