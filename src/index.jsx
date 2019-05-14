@@ -42,7 +42,7 @@ const trashLineById = R.curry(function(id, state) {
   return R.assocPath(['lines', idx, 'trashed'])(true)(state)
 })
 
-function LineView({ line, actions }) {
+function LineLI({ line, actions }) {
   return (
     <div className="pa2 code f6">
       <div className="flex items-center">
@@ -80,7 +80,7 @@ function App() {
   const filteredLines = R.reject(isTrashed)(state.lines)
   const filteredCt = filteredLines.length
   const renderLines = R.map(line => (
-    <LineView key={line.id} line={line} actions={actions} />
+    <LineLI key={line.id} line={line} actions={actions} />
   ))
 
   const selectedTab = R.propOr('ALL', 'currentTab')(state)
