@@ -74,7 +74,7 @@ function App() {
       onTabClicked(name) {
         setState(R.assoc('currentTab')(name))
       },
-      onTitleClicked(line) {
+      onLineLITitleClicked(line) {
         setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
       },
       onBackClicked() {
