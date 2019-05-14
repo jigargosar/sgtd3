@@ -91,7 +91,7 @@ function App() {
     <LineLI key={line.id} line={line} actions={actions} />
   ))
 
-  const selectedTab = R.propOr('ALL', 'currentTab')(state)
+  const selectedTab = R.propOr('ALL_TAB', 'currentTab')(state)
 
   const selTabCN = 'bg-black white'
 
@@ -102,21 +102,23 @@ function App() {
       <div className="sans-serif">
         <div className="pa2 flex">
           <div
-            className={`pa2 ${selectedTab === 'ALL' ? selTabCN : ''}`}
-            onClick={() => actions.onTabClicked('ALL')}
+            className={`pa2 ${selectedTab === 'ALL_TAB' ? selTabCN : ''}`}
+            onClick={() => actions.onTabClicked('ALL_TAB')}
           >
-            ALL: {filteredCt}
+            ALL_TAB: {filteredCt}
           </div>
           <div
-            className={`pa2 ${selectedTab === 'TRASH' ? selTabCN : ''}`}
-            onClick={() => actions.onTabClicked('TRASH')}
+            className={`pa2 ${
+              selectedTab === 'TRASH_TAB' ? selTabCN : ''
+            }`}
+            onClick={() => actions.onTabClicked('TRASH_TAB')}
           >
             Trashed: {trashCt}
           </div>
         </div>
         <hr />
-        {selectedTab === 'ALL' && renderLines(filteredLines)}
-        {selectedTab === 'TRASH' && renderLines(trashedLines)}
+        {selectedTab === 'ALL_TAB' && renderLines(filteredLines)}
+        {selectedTab === 'TRASH_TAB' && renderLines(trashedLines)}
       </div>
     )
   } else if (page.kind === 'LINE_DETAIL') {
