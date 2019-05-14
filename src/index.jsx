@@ -1,6 +1,6 @@
 import 'tachyons'
 import './index.css'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import faker from 'faker'
 import nanoid from 'nanoid'
@@ -24,6 +24,16 @@ function createLine(options) {
 
 function createLines() {
   return R.times(() => createLine())(10)
+}
+
+function loadState() {
+  const parsed = JSON.parse(localStorage.getItem('sgtd3-state') || '{}')
+
+  return R.mergeDeepRight({ lines: createLines() })(parsed)
+}
+
+function cacheState(state) {
+  localStorage.setItem('sgtd3-state', JSON.stringify(state))
 }
 
 const trashLineById = R.curry(function(id, state) {
@@ -51,9 +61,8 @@ function LineView({ line, actions }) {
 }
 
 function App() {
-  const [state, setState] = useState(() => ({
-    lines: createLines(),
-  }))
+  const [state, setState] = useState(loadState)
+  useEffect(() => cacheState(state), [state])
 
   const actions = useMemo(() => {
     return {
@@ -64,7 +73,7 @@ function App() {
   }, [setState])
 
   const trashedLines = R.filter(isTrashed)(state.lines)
-  const trashCount = trashedLines.length
+  const trashCt = trashedLines.length
   const filteredLines = R.reject(isTrashed)(state.lines)
   const filteredCt = filteredLines.length
   const renderLines = R.map(line => (
@@ -74,7 +83,7 @@ function App() {
     <div className="sans-serif">
       <div className="pa2 flex">
         <div className="ph2">Visible: {filteredCt}</div>
-        <div className="ph2">Trashed: {trashCount}</div>
+        <div className="ph2">Trashed: {trashCt}</div>
       </div>
       {renderLines(filteredLines)}
     </div>
