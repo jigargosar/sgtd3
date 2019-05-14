@@ -2,5 +2,67 @@
   "name": "sgtd3",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -fr .cache dist",
+    "start": "npx nodemon -w webpack.config.js -w yarn.lock -x webpack-dev-server"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "clean-webpack-plugin": "^2.0.1",
+    "elm-webpack-loader": "^5.0.0",
+    "eslint": "^5.16.0",
+    "flow-bin": "^0.97.0",
+    "html-webpack-plugin": "^3.2.0",
+    "husky": "^1.3.1",
+    "js-config-webpack-plugin": "^1.3.1",
+    "lint-staged": "^8.1.5",
+    "nodemon": "^1.19.0",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.17.0",
+    "scss-config-webpack-plugin": "^1.3.1",
+    "ts-config-webpack-plugin": "^1.3.1",
+    "typescript": "^3.4.5",
+    "ungit": "^1.4.43",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.3.1"
+  },
+  "dependencies": {
+    "daggy": "^1.4.0",
+    "faker": "^4.1.0",
+    "fp-ts": "^1.17.4",
+    "nanoid": "^2.0.1",
+    "ramda": "^0.26.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.8.6",
+    "sanctuary-maybe": "^1.2.0",
+    "tachyons": "^4.11.1"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "trailingComma": "all",
+    "arrowParens": "avoid",
+    "singleQuote": true,
+    "semi": false,
+    "printWidth": 75,
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "endOfLine": "lf"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "post-commit": "git update-index -g"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md,html,ts,tsx}": [
+      "prettier --config package.json --write",
+      "git add"
+    ]
+  }
 }
