@@ -69,6 +69,9 @@ function App() {
       lineDelClicked(line) {
         setState(trashLineById(line.id))
       },
+      onTabClicked(name) {
+        setState(R.assoc('currentTab')(name))
+      },
     }
   }, [setState])
 
@@ -79,13 +82,29 @@ function App() {
   const renderLines = R.map(line => (
     <LineView key={line.id} line={line} actions={actions} />
   ))
+
+  const selectedTab = R.propOr('ALL', 'currentTab')(state)
+
+  const selTabCN = 'bg-black white'
   return (
     <div className="sans-serif">
       <div className="pa2 flex">
-        <div className="ph2">Visible: {filteredCt}</div>
-        <div className="ph2">Trashed: {trashCt}</div>
+        <div
+          className={`pa2 ${selectedTab === 'ALL' ? selTabCN : ''}`}
+          onClick={() => actions.onTabClicked('ALL')}
+        >
+          ALL: {filteredCt}
+        </div>
+        <div
+          className={`pa2 ${selectedTab === 'TRASH' ? selTabCN : ''}`}
+          onClick={() => actions.onTabClicked('TRASH')}
+        >
+          Trashed: {trashCt}
+        </div>
       </div>
-      {renderLines(filteredLines)}
+      <hr />
+      {selectedTab === 'ALL' && renderLines(filteredLines)}
+      {selectedTab === 'TRASH' && renderLines(trashedLines)}
     </div>
   )
 }
