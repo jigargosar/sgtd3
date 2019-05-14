@@ -90,8 +90,9 @@ function App() {
   const renderLines = R.map(line => (
     <LineLI key={line.id} line={line} actions={actions} />
   ))
-
+  const tabNames = ['ALL_TAB', 'TRASH_TAB']
   const selectedTab = R.propOr('ALL_TAB', 'currentTab')(state)
+  invariant(tabNames.includes(selectedTab))
 
   const selTabCN = 'bg-black white'
 
