@@ -176,7 +176,7 @@ function App() {
         <div className="flex">
           {line.trashed ? (
             <button onClick={() => actions.lineDetailRestoreClicked(line)}>
-              DEL
+              RESTORE
             </button>
           ) : (
             <button onClick={() => actions.lineDetailDelClicked(line)}>
