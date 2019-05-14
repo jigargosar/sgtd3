@@ -125,22 +125,22 @@ function App() {
 
   const actions = useActions(setState)
 
-  const trashedLines = R.filter(isTrashed)(state.lines)
-  const trashCt = trashedLines.length
-  const filteredLines = R.reject(isTrashed)(state.lines)
-  const filteredCt = filteredLines.length
-  const renderLines = R.map(line => (
-    <LineLI key={line.id} line={line} actions={actions} />
-  ))
-  const tabNames = ['ALL_TAB', 'TRASH_TAB']
-  const selectedTab = R.propOr('ALL_TAB', 'currentTab')(state)
-  invariant(tabNames.includes(selectedTab))
-
-  const selTabCN = 'bg-black white'
-
   const page = R.propOr({ kind: 'MAIN_PAGE' }, 'page')(state)
 
   if (page.kind === 'MAIN_PAGE') {
+    const trashedLines = R.filter(isTrashed)(state.lines)
+    const trashCt = trashedLines.length
+    const filteredLines = R.reject(isTrashed)(state.lines)
+    const filteredCt = filteredLines.length
+    const renderLines = R.map(line => (
+      <LineLI key={line.id} line={line} actions={actions} />
+    ))
+    const tabNames = ['ALL_TAB', 'TRASH_TAB']
+    const selectedTab = R.propOr('ALL_TAB', 'currentTab')(state)
+    invariant(tabNames.includes(selectedTab))
+
+    const selTabCN = 'bg-black white'
+
     return (
       <div className="sans-serif">
         <div className="pa2 flex">
