@@ -15,7 +15,7 @@ function invariant(bool, msg) {
 const idEq = R.propEq('id')
 const isTrashed = R.propOr(false, 'trashed')
 
-function createLine(options) {
+function createLine() {
   return {
     id: `I_${nanoid()}`,
     title: faker.name.lastName(),
