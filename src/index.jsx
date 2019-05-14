@@ -50,6 +50,12 @@ const unTrashLineById = R.curry(function(id, state) {
 
 const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
 
+const setTitleById = R.curry(function(id, title, state) {
+  const idx = R.findIndex(idEq(id))(state.lines)
+  invariant(idx >= 0)
+  return R.assocPath(['lines', idx, 'title'])(title)(state)
+})
+
 function useActions(setState) {
   return useMemo(() => {
     return {
@@ -86,6 +92,9 @@ function useActions(setState) {
       onBackClicked() {
         setState(toMainPage)
       },
+      onTitleChanged(title, line) {
+        setState(setTitleById(line.id, title))
+      },
     }
   }, [setState])
 }
@@ -116,7 +125,15 @@ function renderLineDetailPage(actions, state) {
       <button onClick={() => actions.onBackClicked()}>Back</button>
       <div>DETAIL:</div>
       <div>ID: {line.id}</div>
-      <div>Title: {line.title}</div>
+      <label>
+        Title:
+        <input
+          autoFocus
+          type="text"
+          value={line.title}
+          onChange={e => actions.onTitleChanged(e.target.value, line)}
+        />
+      </label>
       <div className="flex">
         {line.trashed ? (
           <button onClick={() => actions.lineDetailRestoreClicked(line)}>
