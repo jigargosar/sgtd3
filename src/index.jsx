@@ -55,7 +55,9 @@ function LineLI({ line, actions }) {
         </button>
       </div>
       <div>Id:{line.id}</div>
-      <div>Title:{line.title}</div>
+      <div onClick={() => actions.onTitleClicked(line)}>
+        Title:{line.title}
+      </div>
     </div>
   )
 }
@@ -72,6 +74,12 @@ function App() {
       onTabClicked(name) {
         setState(R.assoc('currentTab')(name))
       },
+      onTitleClicked(line) {
+        setState(R.assoc('page')({ kind: 'LINE_DETAIL', id: line.id }))
+      },
+      onBackClicked() {
+        setState(R.assoc('page')({ kind: 'MAIN_PAGE' }))
+      },
     }
   }, [setState])
 
@@ -87,9 +95,9 @@ function App() {
 
   const selTabCN = 'bg-black white'
 
-  const page = R.propOr({ kind: 'DEFAULT' }, 'page')(state)
+  const page = R.propOr({ kind: 'MAIN_PAGE' }, 'page')(state)
 
-  if (page.kind === 'DEFAULT') {
+  if (page.kind === 'MAIN_PAGE') {
     return (
       <div className="sans-serif">
         <div className="pa2 flex">
@@ -116,6 +124,7 @@ function App() {
     const line = R.find(idEq(id))(state.lines)
     return (
       <div>
+        <button onClick={() => actions.onBackClicked()}>Back</button>
         <div>DETAIL:</div>
         <div>ID: {line.id}</div>
         <div>Title: {line.title}</div>
