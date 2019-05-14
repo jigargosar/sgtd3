@@ -66,12 +66,21 @@ function LineLI({ line, actions }) {
     <div className="pa2 code f6">
       <div className="flex items-center">
         <div>Item</div>
-        <button
-          className="mh2"
-          onClick={() => actions.lineDelClicked(line)}
-        >
-          DEL
-        </button>
+        {line.trashed ? (
+          <button
+            className="mh2"
+            onClick={() => actions.lineDelClicked(line)}
+          >
+            RESTORE
+          </button>
+        ) : (
+          <button
+            className="mh2"
+            onClick={() => actions.lineDelClicked(line)}
+          >
+            DEL
+          </button>
+        )}
       </div>
       <div>Id:{line.id}</div>
       <div onClick={() => actions.onLineLITitleClicked(line)}>
