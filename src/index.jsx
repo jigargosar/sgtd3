@@ -42,11 +42,20 @@ const trashLineById = R.curry(function(id, state) {
   return R.assocPath(['lines', idx, 'trashed'])(true)(state)
 })
 
+const unTrashLineById = R.curry(function(id, state) {
+  const idx = R.findIndex(idEq(id))(state.lines)
+  invariant(idx >= 0)
+  return R.assocPath(['lines', idx, 'trashed'])(false)(state)
+})
+
 function useActions(setState) {
   return useMemo(() => {
     return {
-      lineDelClicked(line) {
+      lineLiDelClicked(line) {
         setState(trashLineById(line.id))
+      },
+      lineLiRestoreClicked(line) {
+        setState(unTrashLineById(line.id))
       },
       onTabClicked(name) {
         setState(R.assoc('currentTab')(name))
@@ -69,14 +78,14 @@ function LineLI({ line, actions }) {
         {line.trashed ? (
           <button
             className="mh2"
-            onClick={() => actions.lineDelClicked(line)}
+            onClick={() => actions.lineLiRestoreClicked(line)}
           >
             RESTORE
           </button>
         ) : (
           <button
             className="mh2"
-            onClick={() => actions.lineDelClicked(line)}
+            onClick={() => actions.lineLiDelClicked(line)}
           >
             DEL
           </button>
@@ -145,7 +154,9 @@ function App() {
         <div>ID: {line.id}</div>
         <div>Title: {line.title}</div>
         <div className="flex">
-          <button onClick={() => actions.lineDelClicked(line)}>DEL</button>
+          <button onClick={() => actions.lineLiDelClicked(line)}>
+            DEL
+          </button>
         </div>
       </div>
     )
