@@ -213,11 +213,25 @@ function App() {
 
   const page = R.propOr({ kind: 'MAIN_PAGE' }, 'page')(state)
 
-  if (page.kind === 'MAIN_PAGE') {
-    return renderMainPage(state, actions)
-  } else if (page.kind === 'LINE_DETAIL') {
-    return renderLineDetailPage(actions, state)
+  function renderPage() {
+    if (page.kind === 'MAIN_PAGE') {
+      return renderMainPage(state, actions)
+    } else if (page.kind === 'LINE_DETAIL') {
+      return renderLineDetailPage(actions, state)
+    }
   }
+
+  const j = state.linesC.journal
+
+  return (
+    <div>
+      <div>
+        <div>DEBUG</div>
+        <div>Journal Ct: {j.length}</div>
+      </div>
+      {renderPage()}
+    </div>
+  )
 }
 
 function renderLineDetailPage(actions, state) {
