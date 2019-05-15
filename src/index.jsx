@@ -43,6 +43,29 @@ const Collection = {
     invariant(idx >= 0)
     return R.over(R.lensPath(['items', idx]))(fn)(collection)
   }),
+  update: R.curry(function(operation, collection) {
+    const appendOper = oper =>
+      R.over(R.path(['journal']))(
+        R.pipe(
+          R.defaultTo([]),
+          R.append(oper),
+        ),
+      )
+    const updateItems = oper => {
+      const { id, path, from, to } = oper
+      Collection.updateById(id, item => {
+        invariant(R.pathEq(path, from))
+        return R.assocPath(path, to, item)
+      })
+    }
+
+    const fn = R.pipe(
+      appendOper(operation),
+      updateItems(operation),
+    )
+
+    return fn(collection)
+  }),
 }
 
 function createLine() {
