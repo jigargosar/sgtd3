@@ -55,9 +55,12 @@ const Collection = {
     const appendOper = oper => c => {
       const compressOrAppend = j => {
         const last = R.last(j)
+        const eqByIdPath = R.eqBy(R.pick(['id', 'path']))
+        const tsOf = R.propOr(0, 'at')
+        const tsDiff = tsOf(oper) - tsOf(last)
         if (
-          R.eqProps('id', oper, last) &&
-          R.eqProps('path', oper, last) &&
+          tsDiff < 3000 &&
+          eqByIdPath(oper, last) &&
           R.equals(last.to, oper.from)
         ) {
           const modOpr = R.assoc('from')(last.to)(oper)
@@ -196,6 +199,7 @@ function useActions(setState) {
           path: ['title'],
           from: line.title,
           to: title,
+          at: Date.now(),
         })
         setState(overItemsC(fn))
       },
