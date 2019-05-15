@@ -48,13 +48,13 @@ const unTrashLineById = R.curry(function(id, state) {
   return R.assocPath(['lines', idx, 'trashed'])(false)(state)
 })
 
-const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
-
 const setTitleById = R.curry(function(id, title, state) {
   const idx = R.findIndex(idEq(id))(state.lines)
   invariant(idx >= 0)
   return R.assocPath(['lines', idx, 'title'])(title)(state)
 })
+
+const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
 
 function useActions(setState) {
   return useMemo(() => {
