@@ -74,9 +74,12 @@ function cacheState(state) {
   localStorage.setItem('sgtd3-state', JSON.stringify(state))
 }
 
-const overItemsC = R.over(R.lensPath(['itemsC']))
+const overItemsC = R.over(R.lensPath(['linesC']))
+
 const updateItemById = R.curry(function(id, fn, state) {
-  return overItemsC(Collection.updateById(id, fn))(state)
+  return overItemsC(c => {
+    return Collection.updateById(id, fn)(c)
+  })(state)
 })
 const trashLineById = R.curry(function(id, state) {
   return updateItemById(id, R.assoc('trashed')(true))(state)
@@ -87,9 +90,7 @@ const unTrashLineById = R.curry(function(id, state) {
 })
 
 const setTitleById = R.curry(function(id, title, state) {
-  const idx = R.findIndex(idEq(id))(state.lines)
-  invariant(idx >= 0)
-  return R.assocPath(['lines', idx, 'title'])(title)(state)
+  return updateItemById(id, R.assoc('title')(title))(state)
 })
 
 const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
