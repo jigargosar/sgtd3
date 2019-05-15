@@ -15,6 +15,18 @@ function invariant(bool, msg) {
 const idEq = R.propEq('id')
 const isTrashed = R.propOr(false, 'trashed')
 
+const Collection = {
+  named: R.curry(function(name) {
+    return {
+      name,
+      items: [],
+    }
+  }),
+  replaceAll: R.curry(function(items, collection) {
+    return R.assoc('items')(items)(collection)
+  }),
+}
+
 function createLine() {
   return {
     id: `I_${nanoid()}`,
@@ -26,10 +38,18 @@ function createLines() {
   return R.times(() => createLine())(10)
 }
 
+function createLinesCollection() {
+  const lineC = Collection.named('Lines')
+  return Collection.replaceAll(createLines(), lineC)
+}
+
 function loadState() {
   const parsed = JSON.parse(localStorage.getItem('sgtd3-state') || '{}')
 
-  return R.mergeDeepRight({ lines: createLines() })(parsed)
+  return R.mergeDeepRight({
+    lines: createLines(),
+    linesC: createLinesCollection(),
+  })(parsed)
 }
 
 function cacheState(state) {
