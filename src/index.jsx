@@ -44,24 +44,42 @@ const Collection = {
     return R.over(R.lensPath(['items', idx]))(fn)(collection)
   }),
   update: R.curry(function(operation, collection) {
-    const appendOper = oper =>
-      R.over(R.path(['journal']))(
+    const appendOper = oper => c => {
+      // debugger
+      return R.over(R.lensProp('journal'))(
         R.pipe(
+          v => {
+            // debugger
+            return v
+          },
           R.defaultTo([]),
           R.append(oper),
         ),
-      )
+      )(c)
+    }
     const updateItems = oper => {
       const { id, path, from, to } = oper
-      Collection.updateById(id, item => {
-        invariant(R.pathEq(path, from))
+      return Collection.updateById(id, item => {
+        invariant(R.pathEq(path, from, item))
         return R.assocPath(path, to, item)
       })
     }
 
     const fn = R.pipe(
+      v => {
+        // debugger
+        return v
+      },
       appendOper(operation),
+      v => {
+        // debugger
+        return v
+      },
       updateItems(operation),
+      v => {
+        // debugger
+        return v
+      },
     )
 
     return fn(collection)
@@ -110,10 +128,6 @@ const unTrashLineById = R.curry(function(id, state) {
   return updateItemById(id, R.assoc('trashed')(false))(state)
 })
 
-const setTitleById = R.curry(function(id, title, state) {
-  return updateItemById(id, R.assoc('title')(title))(state)
-})
-
 const toMainPage = R.assoc('page')({ kind: 'MAIN_PAGE' })
 
 function useActions(setState) {
@@ -153,7 +167,13 @@ function useActions(setState) {
         setState(toMainPage)
       },
       onTitleChanged(title, line) {
-        setState(setTitleById(line.id, title))
+        const fn = Collection.update({
+          id: line.id,
+          path: ['title'],
+          from: line.title,
+          to: title,
+        })
+        setState(overItemsC(fn))
       },
     }
   }, [setState])
