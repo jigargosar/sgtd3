@@ -77,9 +77,7 @@ function cacheState(state) {
 const overItemsC = R.over(R.lensPath(['linesC']))
 
 const updateItemById = R.curry(function(id, fn, state) {
-  return overItemsC(c => {
-    return Collection.updateById(id, fn)(c)
-  })(state)
+  return overItemsC(Collection.updateById(id, fn))(state)
 })
 const trashLineById = R.curry(function(id, state) {
   return updateItemById(id, R.assoc('trashed')(true))(state)
