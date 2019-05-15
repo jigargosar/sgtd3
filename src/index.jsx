@@ -25,6 +25,20 @@ const Collection = {
   replaceAll: R.curry(function(items, collection) {
     return R.assoc('items')(items)(collection)
   }),
+  filter: R.curry(function(pred, collection) {
+    return R.filter(pred)(collection.items)
+  }),
+  reject: R.curry(function(pred, collection) {
+    return R.reject(pred)(collection.items)
+  }),
+  byId: R.curry(function(id, collection) {
+    return R.find(idEq(id))(collection.items)
+  }),
+  updateById: R.curry(function(id, fn, collection) {
+    const idx = R.findIndex(idEq(id))(collection.items)
+    invariant(idx >= 0)
+    return R.over(R.lensPath(['items', idx]))(fn)(collection)
+  }),
 }
 
 function createLine() {
@@ -57,9 +71,12 @@ function cacheState(state) {
 }
 
 const trashLineById = R.curry(function(id, state) {
-  const idx = R.findIndex(idEq(id))(state.lines)
-  invariant(idx >= 0)
-  return R.assocPath(['lines', idx, 'trashed'])(true)(state)
+  const newLinesC = Collection.updateById(
+    id,
+    R.assoc('trashed')(true),
+    state.linesC,
+  )
+  return R.assoc('linesC')(newLinesC)(state)
 })
 
 const unTrashLineById = R.curry(function(id, state) {
@@ -139,7 +156,7 @@ function App() {
 function renderLineDetailPage(actions, state) {
   const page = state.page
   const id = page.id
-  const line = R.find(idEq(id))(state.lines)
+  const line = Collection.byId(id, state.linesC)
   return (
     <div>
       <button onClick={() => actions.onBackClicked()}>Back</button>
@@ -170,9 +187,9 @@ function renderLineDetailPage(actions, state) {
 }
 
 function renderMainPage(state, actions) {
-  const trashedLines = R.filter(isTrashed)(state.lines)
+  const trashedLines = Collection.filter(isTrashed)(state.linesC)
   const trashCt = trashedLines.length
-  const filteredLines = R.reject(isTrashed)(state.lines)
+  const filteredLines = Collection.reject(isTrashed)(state.linesC)
   const filteredCt = filteredLines.length
   const renderLines = R.map(line => (
     <LineLI key={line.id} line={line} actions={actions} />
