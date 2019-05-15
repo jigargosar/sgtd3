@@ -15,6 +15,10 @@ function invariant(bool, msg) {
 const idEq = R.propEq('id')
 const isTrashed = R.propOr(false, 'trashed')
 
+const idxById = R.curry(function(id, arr) {
+  return R.findIndex(idEq(id), arr)
+})
+
 const Collection = {
   named: R.curry(function(name) {
     return {
@@ -35,7 +39,7 @@ const Collection = {
     return R.find(idEq(id))(collection.items)
   }),
   updateById: R.curry(function(id, fn, collection) {
-    const idx = R.findIndex(idEq(id))(collection.items)
+    const idx = idxById(id, collection.items)
     invariant(idx >= 0)
     return R.over(R.lensPath(['items', idx]))(fn)(collection)
   }),
@@ -70,19 +74,16 @@ function cacheState(state) {
   localStorage.setItem('sgtd3-state', JSON.stringify(state))
 }
 
+const overItemsC = R.over(R.lensPath(['itemsC']))
+const updateItemById = R.curry(function(id, fn, state) {
+  return overItemsC(Collection.updateById(id, fn))(state)
+})
 const trashLineById = R.curry(function(id, state) {
-  const newLinesC = Collection.updateById(
-    id,
-    R.assoc('trashed')(true),
-    state.linesC,
-  )
-  return R.assoc('linesC')(newLinesC)(state)
+  return updateItemById(id, R.assoc('trashed')(true))(state)
 })
 
 const unTrashLineById = R.curry(function(id, state) {
-  const idx = R.findIndex(idEq(id))(state.lines)
-  invariant(idx >= 0)
-  return R.assocPath(['lines', idx, 'trashed'])(false)(state)
+  return updateItemById(id, R.assoc('trashed')(false))(state)
 })
 
 const setTitleById = R.curry(function(id, title, state) {
