@@ -44,16 +44,40 @@ const Collection = {
     return R.over(R.lensPath(['items', idx]))(fn)(collection)
   }),
   update: R.curry(function(operation, collection) {
+    const mapJournal = fn =>
+      R.over(R.lensProp('journal'))(
+        R.pipe(
+          R.defaultTo([]),
+          fn,
+        ),
+      )
+
     const appendOper = oper => c => {
+      const compressOrAppend = j => {
+        const last = R.last(j)
+        if (
+          R.eqProps('id', oper, last) &&
+          R.eqProps('path', oper, last) &&
+          R.equals(last.to, oper.from)
+        ) {
+          const modOpr = R.assoc('from')(last.to)(oper)
+          return R.compose(
+            R.append(modOpr),
+            R.drop(1),
+          )(j)
+        }
+        return R.append(oper, j)
+      }
+
       // debugger
-      return R.over(R.lensProp('journal'))(
+      return mapJournal(
         R.pipe(
           v => {
             // debugger
             return v
           },
-          R.defaultTo([]),
-          R.append(oper),
+          R.ifElse(R.isEmpty, R.append(oper), compressOrAppend),
+          R.take(100),
         ),
       )(c)
     }
