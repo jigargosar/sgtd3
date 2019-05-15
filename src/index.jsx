@@ -290,7 +290,7 @@ function renderMainPage(state, actions) {
           className={`pa2 ${selectedTab === 'ALL_TAB' ? selTabCN : ''}`}
           onClick={() => actions.onTabClicked('ALL_TAB')}
         >
-          ALL_TAB: {filteredCt}
+          ALL: {filteredCt}
         </div>
         <div
           className={`pa2 ${selectedTab === 'TRASH_TAB' ? selTabCN : ''}`}
